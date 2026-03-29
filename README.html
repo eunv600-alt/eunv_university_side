@@ -1,2 +1,206 @@
-# eunv_university_side
-一个关于高校端绿色设备采购的页面（非完整版）
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绿采共赢平台 (高校端)</title>
+    <style>
+        :root {
+            --primary-green: #00b98d;
+            --bg-gray: #f8f9fa;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+            background-color: #fff;
+        }
+
+        /* --- 导航栏 --- */
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 10%; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .logo { font-size: 22px; font-weight: bold; color: var(--primary-green); cursor: pointer; }
+        nav ul { display: flex; list-style: none; gap: 30px; }
+        nav a { text-decoration: none; color: #666; cursor: pointer; transition: 0.3s; }
+        nav a:hover, nav a.active { color: var(--primary-green); font-weight: bold; }
+
+        /* 登录注册按钮 */
+        .auth-btns { display: flex; gap: 15px; }
+        .btn { padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 14px; transition: 0.3s; border: 1px solid var(--primary-green); }
+        .btn-login { color: var(--primary-green); background: #fff; }
+        .btn-reg { color: #fff; background: var(--primary-green); }
+
+        /* --- 页面容器 --- */
+        .page { display: none; min-height: 80vh; }
+        .page.active { display: block; }
+
+        /* --- 首页样式 --- */
+        .hero {
+            background: linear-gradient(135deg, #f0fdf9 0%, #ffffff 100%);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 60px 10% 100px 10%;
+        }
+        .hero-title { font-size: 40px; font-weight: bold; }
+        .hero-img { width: 400px; }
+
+        .cards-container {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 25px; padding: 0 10%; margin-top: -50px;
+        }
+        .card {
+            background: #fff; border-radius: 15px; overflow: hidden;
+            box-shadow: var(--shadow); transition: 0.3s; cursor: pointer;
+        }
+        .card:hover { transform: translateY(-10px); }
+        .card img { width: 100%; display: block; }
+
+        /* --- 采购管理页面样式 --- */
+        #purchase-page { padding: 50px 10%; background: #fff; }
+        .section-title { font-size: 28px; margin-bottom: 40px; text-align: center; }
+        
+        .purchase-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); /* 横着排列三张 */
+            gap: 30px; align-items: center;
+        }
+        .purchase-item {
+            text-align: center; border: 1px solid #eee; border-radius: 12px;
+            padding: 20px; transition: 0.3s;
+        }
+        .purchase-item:hover { box-shadow: var(--shadow); }
+        .purchase-item img {
+            width: 100%; /* 宽度一致 */
+            aspect-ratio: 1 / 1; /* 强制比例一致（正方形感） */
+            object-fit: contain; /* 保证图标不被拉伸 */
+        }
+
+        /* --- 弹窗 (Login/Reg) --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 2000;
+        }
+        .modal-content {
+            background: #fff; padding: 30px; border-radius: 15px; width: 350px; position: relative;
+        }
+        .close { position: absolute; right: 20px; top: 15px; cursor: pointer; font-size: 20px; }
+        .form-input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        .auth-checkbox { margin-top: 10px; font-size: 13px; color: #666; display: flex; align-items: center; gap: 5px; }
+
+        /* --- 页脚 --- */
+        footer { padding: 40px; text-align: center; border-top: 1px solid #eee; margin-top: 50px; color: #888; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="switchPage('home')">高校端</div>
+        <nav>
+            <ul>
+                <li><a id="nav-home" class="active" onclick="switchPage('home')">首页</a></li>
+                <li><a id="nav-purchase" onclick="switchPage('purchase')">采购管理</a></li>
+                <li><a href="#">资源共享</a></li>
+                <li><a href="#">数据分析</a></li>
+            </ul>
+        </nav>
+        <div class="auth-btns">
+            <div class="btn btn-login" onclick="toggleModal('show')">登录</div>
+            <div class="btn btn-reg" onclick="toggleModal('show', 'reg')">注册</div>
+        </div>
+    </header>
+
+    <div id="home-page" class="page active">
+        <section class="hero">
+            <div class="hero-title">绿采共赢平台 (高校端)</div>
+            <div class="hero-img">
+                <img src="节能减排5.png" alt="Decoration" style="width:100%">
+            </div>
+        </section>
+
+        <section class="cards-container">
+            <div class="card" onclick="switchPage('purchase')"><img src="节能减排3.png" alt="采购需求"></div>
+            <div class="card"><img src="节能减排4.png" alt="资源推荐"></div>
+            <div class="card"><img src="节能减排2.png" alt="数据看板"></div>
+        </section>
+    </div>
+
+    <div id="purchase-page" class="page">
+        <h2 class="section-title">采购管理流程</h2>
+        <div class="purchase-grid">
+            <div class="purchase-item">
+                <img src="节能减排6.png" alt="供应商筛选">
+                <p>供应商筛选</p>
+            </div>
+            <div class="purchase-item">
+                <img src="节能减排7.png" alt="合同管理">
+                <p>合同管理</p>
+            </div>
+            <div class="purchase-item">
+                <img src="节能减排8.png" alt="快速发布">
+                <p>快速发布采购</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="authModal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleModal('hide')">&times;</span>
+            <h3 id="modalTitle">用户登录</h3>
+            <input type="text" class="form-input" placeholder="手机号/邮箱">
+            <input type="password" class="form-input" placeholder="密码">
+            
+            <div id="regOnly" style="display:none;">
+                <div class="auth-checkbox">
+                    <input type="checkbox" id="verify">
+                    <label for="verify">开启高校官方身份认证</label>
+                </div>
+            </div>
+
+            <button class="btn btn-reg" style="width:100%; margin-top:15px; border-radius:5px;" onclick="handleSubmit()">提交</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>联系我们 | 关于平台 | 帮助中心</p>
+        <p style="font-size: 12px; margin-top: 10px;">&copy; 2026 绿采共赢平台高校端 版权所有</p>
+    </footer>
+
+    <script>
+        // 页面切换逻辑
+        function switchPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+            
+            document.getElementById(pageId + '-page').classList.add('active');
+            document.getElementById('nav-' + pageId).classList.add('active');
+        }
+
+        // 弹窗逻辑
+        function toggleModal(action, type = 'login') {
+            const modal = document.getElementById('authModal');
+            const regSection = document.getElementById('regOnly');
+            const title = document.getElementById('modalTitle');
+
+            if (action === 'show') {
+                modal.style.display = 'flex';
+                if (type === 'reg') {
+                    title.innerText = '新用户注册';
+                    regSection.style.display = 'block';
+                } else {
+                    title.innerText = '用户登录';
+                    regSection.style.display = 'none';
+                }
+            } else {
+                modal.style.display = 'none';
+            }
+        }
+
+        function handleSubmit() {
+            alert('操作成功！已进入系统。');
+            toggleModal('hide');
+        }
+    </script>
+</body>
+</html>
