@@ -165,6 +165,91 @@
             object-fit: cover; /* 保证图片充满不失真 */
             display: block;
         }
+        /* 卡片悬浮呼吸动效 */
+.entry-item .entry-card-box {
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 1px solid rgba(0,0,0,0.05); /* 淡淡的边框增加精致度 */
+}
+
+.entry-item:hover .entry-card-box {
+    transform: translateY(-12px);
+    border-color: var(--primary-green);
+    box-shadow: 0 20px 40px rgba(0, 185, 141, 0.12);
+}
+
+/* 顶部导航毛玻璃效果 */
+header {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* 滚动数字样式的统计条 */
+.stat-bar {
+    display: flex;
+    justify-content: space-around;
+    padding: 30px 10%;
+    background: #fff;
+    margin: -30px 10% 40px 10%;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+    position: relative;
+    z-index: 10;
+}
+/* 统计条样式 */
+.home-stat-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #fff;
+    padding: 30px;
+    border-radius: 20px;
+    margin: -40px 40px 40px 40px; /* 向上偏移压在 Banner 上 */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 10;
+}
+.stat-item { text-align: center; border-right: 1px solid #f0f0f0; flex: 1; }
+.stat-item:last-child { border-right: none; }
+.stat-num { font-size: 24px; font-weight: bold; color: #00b98d; margin-bottom: 5px; }
+.stat-label { font-size: 13px; color: #888; }
+
+/* 增强原有的 stat-card 卡片动效 */
+.stat-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background: #fff;
+    padding: 25px !important;
+    border-radius: 15px !important;
+}
+.stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 185, 141, 0.1);
+    border-color: #00b98d !important;
+}
+
+/* 底部合作伙伴样式 */
+.partner-section {
+    margin-top: 60px;
+    text-align: center;
+}
+.partner-title { font-size: 14px; color: #aaa; margin-bottom: 25px; letter-spacing: 2px; }
+.partner-logos { 
+    display: flex; justify-content: center; gap: 40px; opacity: 0.6; filter: grayscale(1); 
+    transition: 0.5s; 
+}
+.partner-logos:hover { opacity: 1; filter: grayscale(0); }
+.partner-logos img { height: 35px; }
+
+/* 侧边悬浮窗 */
+.quick-side-bar {
+    position: fixed; right: 20px; bottom: 100px; z-index: 1000;
+    display: flex; flex-direction: column; gap: 10px;
+}
+.side-item {
+    width: 45px; height: 45px; background: #fff; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); cursor: pointer; transition: 0.3s;
+}
+.side-item:hover { background: #00b98d; color: #fff; }
     </style>
 </head>
 <body>
@@ -291,30 +376,82 @@
         </div>
     </header>
 
-   <main id="home-page" class="page active page-animate">
-        <section style="background: linear-gradient(135deg, #f0fdf4 0%, #e6f4ea 100%); padding: 60px; border-radius: 30px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 80px; min-height: 400px;">
-            <div style="flex: 1; padding-right: 50px;">
-                <h1 style="font-size: 38px; color: #1a4d1a; margin-bottom: 25px;">构建绿色科研生态</h1>
-                <p style="color: #4a6d4a; font-size: 19px; line-height: 1.8;">让每一笔科研预算都为碳减排做出贡献。</p>
+  <main id="home-page" class="page active page-animate">
+    <section style="background: linear-gradient(135deg, #f0fdf4 0%, #e6f4ea 100%); padding: 100px 60px; border-radius: 30px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 0px; min-height: 400px; position: relative;">
+        <div style="flex: 1; padding-right: 60px;">
+            <div style="display: inline-block; padding: 6px 18px; background: #fff; color: #00b98d; border-radius: 20px; font-size: 12px; margin-bottom: 25px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,185,141,0.1);">高校碳中和数字化解决方案</div>
+            <h1 style="font-size: 48px; color: #1a4d1a; margin-bottom: 25px; line-height: 1.1; font-weight: 800;">构建绿色科研生态</h1>
+            <p style="color: #4a6d4a; font-size: 19px; line-height: 1.8; opacity: 0.8; max-width: 500px;">连接高校实验室与优质节能供应商，让每一笔科研预算都为碳减排做出贡献。</p>
+            <div style="margin-top: 40px;">
+                <button class="btn-reg" style="padding: 14px 35px; border-radius: 30px; font-weight: bold; font-size: 15px; border:none; box-shadow: 0 10px 20px rgba(0,185,141,0.2);" onclick="switchPage('purchase')">发布采购需求</button>
             </div>
-            
-            <div class="home-carousel-container">
-                <div class="home-carousel-track" id="homeCarouselTrack">
-                    <div class="home-carousel-slide"><img src="gaoxiao_photo1.jpg" alt="高校图1"></div>
-                    <div class="home-carousel-slide"><img src="gaoxiao_photo2.jpg" alt="高校图2"></div>
-                    <div class="home-carousel-slide"><img src="gaoxiao_photo3.jpg" alt="高校图3"></div>
-                </div>
-            </div>
-        </section>
-        
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
-            <div class="stat-card" style="border: 1px solid #eee; cursor:pointer;" onclick="switchPage('about')"><h4>关于我们</h4><p style="font-size:12px; color:#999; margin-top:5px;">高校零碳倡议</p></div>
-            <div class="stat-card" style="border: 1px solid #eee; cursor:pointer;" onclick="switchPage('guide')"><h4>使用指南</h4><p style="font-size:12px; color:#999; margin-top:5px;">快速上手手册</p></div>
-            <div class="stat-card" style="border: 1px solid #eee; cursor:pointer;" onclick="switchPage('contact')"><h4>联系我们</h4><p style="font-size:12px; color:#999; margin-top:5px;">7x24 官方客服</p></div>
-            <div class="stat-card" style="border: 1px solid #eee; cursor:pointer;" onclick="switchPage('feedback')"><h4>用户反馈</h4><p style="font-size:12px; color:#999; margin-top:5px;">积分奖励计划</p></div>
         </div>
-    </main>
+        
+        <div class="home-carousel-container">
+            <div class="home-carousel-track" id="homeCarouselTrack">
+                <div class="home-carousel-slide"><img src="gaoxiao_photo1.jpg" alt="高校图1"></div>
+                <div class="home-carousel-slide"><img src="gaoxiao_photo2.jpg" alt="高校图2"></div>
+                <div class="home-carousel-slide"><img src="gaoxiao_photo3.jpg" alt="高校图3"></div>
+            </div>
+        </div>
+    </section>
 
+    <div class="home-stat-bar">
+        <div class="stat-item">
+            <div class="stat-icon">🏫</div>
+            <div class="stat-num">528+</div>
+            <div class="stat-label">入驻高校</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon">🤝</div>
+            <div class="stat-num">1.2k+</div>
+            <div class="stat-label">服务供应商</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon">🍃</div>
+            <div class="stat-num">8.2T</div>
+            <div class="stat-label">本月减碳总量</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-num">24h</div>
+            <div class="stat-label">需求响应</div>
+        </div>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; padding: 0 40px;">
+        <div class="stat-card" style="border: 1px solid #eee; cursor:pointer;" onclick="switchPage('about')">
+            <div class="card-icon-bg">🏛️</div>
+            <h4 style="font-size:18px; color:#333;">关于我们</h4>
+            <p style="font-size:13px; color:#7f8c8d; margin-top:8px; line-height:1.6;">致力于推动高校零碳校园建设的专业倡议</p>
+        </div>
+        <div class="stat-card" style="border: 1px solid #eee; cursor:pointer;" onclick="switchPage('guide')">
+            <div class="card-icon-bg">📘</div>
+            <h4 style="font-size:18px; color:#333;">使用指南</h4>
+            <p style="font-size:13px; color:#7f8c8d; margin-top:8px; line-height:1.6;">新手全流程引导，快速上手绿色采买</p>
+        </div>
+        <div class="stat-card" style="border: 1px solid #eee; cursor:pointer;" onclick="switchPage('contact')">
+            <div class="card-icon-bg">🎧</div>
+            <h4 style="font-size:18px; color:#333;">联系我们</h4>
+            <p style="font-size:13px; color:#7f8c8d; margin-top:8px; line-height:1.6;">专业技术支持，为您解决采购疑难</p>
+        </div>
+        <div class="stat-card" style="border: 1px solid #eee; cursor:pointer;" onclick="switchPage('feedback')">
+            <div class="card-icon-bg">🎁</div>
+            <h4 style="font-size:18px; color:#333;">用户反馈</h4>
+            <p style="font-size:13px; color:#7f8c8d; margin-top:8px; line-height:1.6;">您的建议至关重要，参与反馈获积分</p>
+        </div>
+    </div>
+
+    <div class="partner-section">
+        <p class="partner-title">战略合作伙伴 / STRATEGIC PARTNERS</p>
+        <div class="partner-logos">
+            <span>清华大学节能中心</span>
+            <span>华为数字能源</span>
+            <span>格力绿色空调</span>
+            <span>中国节能环保集团</span>
+        </div>
+    </div>
+</main>
     <main id="purchase-page" class="page page-animate">
         <div class="shop-layout" id="shop-list-view">
             <aside>
