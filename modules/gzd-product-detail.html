@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>绿色物资决策中心 - 绿采共赢</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root { --primary-green: #29a672; --bg-gray: #f4f7fc; --text-dark: #1e293b; --border-color: #e2e8f0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-gray); font-family: 'Segoe UI', system-ui, sans-serif; color: var(--text-dark); padding: 20px 5%; }
+
+        .header-nav { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header-nav a { color: var(--primary-green); text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; }
+
+        .product-layout { display: grid; grid-template-columns: 450px 1fr; gap: 30px; margin-bottom: 30px; }
+        .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+
+        /* 左侧：产品图片与碳足迹 */
+        .img-display { width: 100%; height: 350px; background: #f8fafc; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 80px; color: #cbd5e1; border: 1px dashed #cbd5e1; margin-bottom: 20px; }
+        .eco-badges { display: flex; gap: 10px; flex-wrap: wrap; }
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; display: flex; align-items: center; gap: 5px; }
+        .badge-green { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .badge-blue { background: #e0e7ff; color: #3730a3; border: 1px solid #c7d2fe; }
+
+        /* 右侧：产品详情与决策联动 */
+        .product-title { font-size: 24px; font-weight: bold; margin-bottom: 15px; }
+        .price-box { background: #f0fdf4; padding: 20px; border-radius: 12px; border-left: 4px solid var(--primary-green); margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+        .price-current { font-size: 32px; color: #166534; font-weight: bold; }
+        .price-normal { font-size: 14px; color: #64748b; text-decoration: line-through; }
+
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+        .info-item { display: flex; flex-direction: column; gap: 5px; }
+        .info-label { font-size: 13px; color: #64748b; }
+        .info-value { font-size: 15px; font-weight: 500; }
+
+        /* 供应商风控卡片 */
+        .vendor-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: #fafafa; }
+        .vendor-status { display: flex; align-items: center; gap: 8px; color: var(--primary-green); font-size: 14px; font-weight: bold; }
+
+        /* 操作按钮组 */
+        .action-group { display: flex; gap: 15px; }
+        .btn-primary { background: var(--primary-green); color: white; border: none; padding: 15px 30px; border-radius: 10px; font-weight: bold; font-size: 16px; cursor: pointer; flex: 2; transition: 0.3s; }
+        .btn-primary:hover { background: #218c5e; box-shadow: 0 4px 12px rgba(41,166,114,0.3); }
+        .btn-secondary { background: white; border: 1px solid #f59e0b; color: #d97706; padding: 15px; border-radius: 10px; font-weight: bold; font-size: 15px; cursor: pointer; flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.3s; }
+        .btn-secondary:hover { background: #fffbeb; }
+
+        /* 底部参数 Tab */
+        .tabs { display: flex; gap: 30px; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; }
+        .tab { padding: 10px 0; cursor: pointer; font-weight: bold; color: #64748b; position: relative; }
+        .tab.active { color: var(--primary-green); }
+        .tab.active::after { content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 3px; background: var(--primary-green); border-radius: 3px 3px 0 0; }
+
+    </style>
+</head>
+<body>
+
+    <div class="header-nav">
+        <a href="gzd-workbench.html"><i class="fas fa-arrow-left"></i> 返回工作台</a>
+        <div style="font-size: 13px; color: #64748b;">采购类目：科研仪器 > 环境监测设备 > 绿色认证产品</div>
+    </div>
+
+    <div class="product-layout">
+        <div class="card">
+            <div class="img-display">
+                <i class="fas fa-microscope"></i>
+            </div>
+            <h3 style="font-size: 15px; margin-bottom: 15px;">已获环境认证资质：</h3>
+            <div class="eco-badges">
+                <span class="badge badge-green"><i class="fas fa-leaf"></i> 中国环境标志 (十环)</span>
+                <span class="badge badge-green"><i class="fas fa-bolt"></i> 国家一级能效</span>
+                <span class="badge badge-blue"><i class="fas fa-recycle"></i> 85%可降解材料</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h1 class="product-title">智能生化培养箱 (低碳节能型) - 实验室专用</h1>
+            
+            <div class="price-box">
+                <div>
+                    <div style="font-size: 13px; color: #166534; margin-bottom: 5px;">高校协议绿色采购价</div>
+                    <div class="price-current">¥ 5,500.00 <span style="font-size: 14px; font-weight: normal; color: #64748b;">/台</span></div>
+                    <div class="price-normal">同规格普通非节能产品参考价：¥ 4,200.00</div>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 12px; color: #166534; background: #dcfce7; padding: 4px 10px; border-radius: 12px; display: inline-block;">预计年省电费: ¥300</div>
+                </div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item"><span class="info-label">产品型号</span><span class="info-value">LRX-250G (Green版)</span></div>
+                <div class="info-item"><span class="info-label">碳足迹核算</span><span class="info-value">25.4 kg CO₂e (全生命周期)</span></div>
+                <div class="info-item"><span class="info-label">交货周期</span><span class="info-value">现货 (下单后3天送达)</span></div>
+                <div class="info-item"><span class="info-label">售后维保</span><span class="info-value">5年整机质保 + 免费回收处置</span></div>
+            </div>
+
+           <div class="vendor-card">
+    <div>
+        <div style="font-size: 14px; font-weight: bold; margin-bottom: 5px;">
+            供应商：<a href="gzd-vendor-check.html?company=广州绿能科仪设备有限公司" 
+               style="color: var(--primary-green); text-decoration: underline; cursor: pointer;">
+               广州绿能科仪设备有限公司
+            </a>
+        </div>
+        <div style="font-size: 12px; color: #64748b;">平台已通过统一社会信用代码核验</div>
+    </div>
+    <div class="vendor-status" style="cursor: pointer;" onclick="window.location.href='gzd-vendor-check.html?company=广州绿能科仪设备有限公司'">
+        <i class="fas fa-shield-alt"></i> 资质合规 (查看档案)
+    </div>
+</div>
+
+            <div class="action-group">
+                <button class="btn-primary" onclick="alert('已加入待生成的环保采购标书清单中。')">
+                    <i class="fas fa-folder-plus"></i> 加入采购清单
+                </button>
+                <button class="btn-secondary" onclick="window.location.href='gzd-premium-report.html'">
+                    <i class="fas fa-chart-pie"></i> 一键测算溢价
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="tabs">
+            <div class="tab active">绿色合规详情</div>
+            <div class="tab">产品规格参数</div>
+            <div class="tab">售后与回收承诺</div>
+        </div>
+        <div style="line-height: 1.8; color: #475569; font-size: 14px;">
+            <h4>节能降耗表现说明：</h4>
+            <p>本型号设备采用全新一代环保变频压缩机及无氟制冷剂 (R134a)，相比传统定频培养箱，综合耗电量降低约 45%。外壳采用无铅静电喷涂工艺，保温层为 100% 可回收的无氟聚氨酯发泡材料，完全符合《高校绿色采购合规指南》中的环境友好型产品认定标准。</p>
+            <br>
+            <h4>生命周期末端处置：</h4>
+            <p>供应商承诺在设备达到报废年限后，提供免费上门回收服务，交由具有国家环保资质的第三方机构进行拆解，确保重金属及制冷剂不外流，闭环管理高校实验室污染风险。</p>
+        </div>
+    </div>
+
+</body>
+</html>

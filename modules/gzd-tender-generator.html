@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>标书环保条款生成器 - 绿采共赢</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #29a672;
+            --bg-gray: #f4f7fc;
+            --text-dark: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-gray); font-family: 'Segoe UI', system-ui, sans-serif; color: var(--text-dark); padding: 20px 5%; }
+
+        .header-nav { margin-bottom: 20px; }
+        .header-nav a { color: var(--primary-green); text-decoration: none; font-weight: bold; display: inline-flex; align-items: center; gap: 5px; }
+
+        .page-header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .page-header h1 { font-size: 24px; color: var(--text-dark); }
+        .tag-free { background: #e6f4ea; color: #166534; font-size: 12px; padding: 4px 12px; border-radius: 12px; font-weight: bold; border: 1px solid #bbf7d0; }
+
+        .main-layout { display: grid; grid-template-columns: 400px 1fr; gap: 24px; }
+        .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        .card-title { font-size: 16px; font-weight: bold; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; border-left: 4px solid var(--primary-green); padding-left: 10px; }
+
+        /* 左侧：表单配置区 */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 14px; font-weight: bold; color: #475569; margin-bottom: 10px; }
+        
+        .radio-group { display: flex; gap: 10px; }
+        .radio-label { flex: 1; text-align: center; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; cursor: pointer; transition: 0.2s; font-size: 14px; color: #64748b; background: #f8fafc; }
+        .radio-label:hover { border-color: var(--primary-green); }
+        .radio-input { display: none; }
+        .radio-input:checked + .radio-label { background: #f0fdf4; border-color: var(--primary-green); color: var(--primary-green); font-weight: bold; box-shadow: 0 0 0 2px rgba(41,166,114,0.1); }
+
+        .btn-generate { background: var(--primary-green); color: white; border: none; padding: 15px; border-radius: 10px; width: 100%; font-weight: bold; font-size: 16px; cursor: pointer; transition: 0.3s; margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-generate:hover { background: #218c5e; box-shadow: 0 4px 12px rgba(41,166,114,0.2); }
+
+        /* 右侧：生成结果区 */
+        .result-container { position: relative; height: 100%; display: flex; flex-direction: column; }
+        .empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; }
+        .empty-state i { font-size: 60px; margin-bottom: 15px; opacity: 0.5; }
+        
+        .result-content { display: none; flex: 1; flex-direction: column; }
+        .textarea-box { flex: 1; width: 100%; border: 1px dashed var(--primary-green); border-radius: 12px; padding: 25px; font-family: 'SimSun', '宋体', serif; font-size: 15px; line-height: 1.8; color: #1e293b; background: #fdfdfd; resize: none; outline: none; margin-bottom: 20px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02); }
+        
+        .btn-copy { background: white; border: 1px solid var(--primary-green); color: var(--primary-green); padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; }
+        .btn-copy:hover { background: var(--primary-green); color: white; }
+
+        @media (max-width: 1024px) {
+            .main-layout { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-nav">
+        <a href="gzd-workbench.html"><i class="fas fa-arrow-left"></i> 返回工作台</a>
+    </div>
+
+    <div class="page-header">
+        <h1><i class="fas fa-clipboard-list" style="color: var(--primary-green);"></i> 标书环保条款智能生成器</h1>
+        <span class="tag-free"><i class="fas fa-check-circle"></i> 基础免费功能</span>
+    </div>
+
+    <div class="main-layout">
+        <div class="card" style="height: fit-content;">
+            <div class="card-title">条款生成参数配置</div>
+            <p style="font-size: 12px; color: #64748b; margin-bottom: 25px;">请根据本次采购项目属性选择对应参数，系统将自动从内置合规模板库中提取并拼接六大核心条款。</p>
+
+            <div class="form-group">
+                <label>1. 采购类型</label>
+                <div class="radio-group">
+                    <input type="radio" name="procType" id="type-device" value="设备" class="radio-input" checked>
+                    <label for="type-device" class="radio-label">实验室设备</label>
+                    
+                    <input type="radio" name="procType" id="type-consumable" value="耗材" class="radio-input">
+                    <label for="type-consumable" class="radio-label">行政耗材</label>
+
+                    <input type="radio" name="procType" id="type-project" value="工程" class="radio-input">
+                    <label for="type-project" class="radio-label">校园工程</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>2. 环保要求等级</label>
+                <div class="radio-group">
+                    <input type="radio" name="envLevel" id="level-normal" value="普通" class="radio-input" checked>
+                    <label for="level-normal" class="radio-label">普通 (基本合规)</label>
+                    
+                    <input type="radio" name="envLevel" id="level-strict" value="严格" class="radio-input">
+                    <label for="level-strict" class="radio-label">严格 (示范项目)</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>3. 是否要求绿色资质</label>
+                <div class="radio-group">
+                    <input type="radio" name="needCert" id="cert-yes" value="是" class="radio-input" checked>
+                    <label for="cert-yes" class="radio-label">是 (作为实质性要求)</label>
+                    
+                    <input type="radio" name="needCert" id="cert-no" value="否" class="radio-input">
+                    <label for="cert-no" class="radio-label">否 (仅作加分项)</label>
+                </div>
+            </div>
+
+            <button class="btn-generate" onclick="generateClauses()">
+                <i class="fas fa-magic"></i> 智能生成标书条款
+            </button>
+        </div>
+
+        <div class="card result-container">
+            <div class="card-title" style="border-left-color: #3b82f6;">标书专用条款 (六大模块)</div>
+            
+            <div class="empty-state" id="emptyState">
+                <i class="fas fa-file-signature"></i>
+                <p>等待系统生成合规文本...</p>
+            </div>
+
+            <div class="result-content" id="resultContent">
+                <textarea class="textarea-box" id="clauseText" readonly></textarea>
+                <button class="btn-copy" onclick="copyToClipboard()">
+                    <i class="far fa-copy"></i> 一键复制，粘贴至采购标书
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function generateClauses() {
+            // 获取用户选择的参数
+            const procType = document.querySelector('input[name="procType"]:checked').value;
+            const envLevel = document.querySelector('input[name="envLevel"]:checked').value;
+            const needCert = document.querySelector('input[name="needCert"]:checked').value;
+
+            let text = `【绿色采购环保专用条款（${procType}类）】\n\n`;
+
+            // 1. 通用环保条款 (固定格式)
+            text += `一、通用环保条款\n供应商所提供产品及服务必须严格符合国家最新发布的《生态环境部、财政部关于印发环境标志产品政府采购品目清单的通知》等相关政策要求，确保全生命周期内的环境友好性，不采购国家明令禁止或淘汰的高污染、高能耗产品。\n\n`;
+
+            // 2. 绿色产品条款 (根据资质要求变化)
+            let c2 = "";
+            if(needCert === "是") {
+                c2 = `投标产品必须拥有国家认定的“中国环境标志产品认证（十环认证）”或同等效力的国际/国内绿色产品认证证书，投标文件中须附证书扫描件且确保证书在有效期内。缺漏则视为未响应本招标文件的实质性要求。`;
+            } else {
+                c2 = `本项目优先采购具有环保节能标识、低碳认证的产品。在同等技术和商务条件下，评标委员会将给予具有绿色认证的产品一定的加分倾斜。`;
+            }
+            if(procType === "工程") c2 += " 所用建材及涂料须完全符合国家最新《绿色建筑评价标准》。";
+            text += `二、绿色产品条款\n${c2}\n\n`;
+
+            // 3. 供应商环保合规条款 (根据等级变化)
+            let c3 = `供应商需承诺在近三年内无因违反生态保护、污染防治等法律法规而受到的重大行政处罚记录。`;
+            if(envLevel === "严格") {
+                c3 += `同时，供应商需建立完善的 ISO14001 环境管理体系，并在投标时一并提供有效的体系认证证书扫描件。`;
+            }
+            text += `三、供应商环保合规条款\n${c3}\n\n`;
+
+            // 4. 节能要求条款 (根据类型和等级交叉变化)
+            let c4 = "";
+            if(procType === "设备") {
+                c4 = envLevel === "严格" ? "投标设备能效等级须达到国家一级能效标准，待机功耗应符合行业最严格的低功耗要求。" : "投标设备能效等级须达到或优于国家二级能效标准。";
+            } else if(procType === "工程") {
+                c4 = envLevel === "严格" ? "工程机电及照明系统须全面采用一级能效设备，满足超低能耗建筑标准设计要求。" : "工程使用的机电设备及照明灯具应采用国家推荐的节能型产品。";
+            } else {
+                c4 = envLevel === "严格" ? "耗材生产过程须符合国家节能降碳要求，严禁使用高耗能、高污染落后工艺生产的产品。" : "所投耗材应具备节能降耗的相关生产说明或技术参数证明。";
+            }
+            text += `四、节能要求条款\n${c4}\n\n`;
+
+            // 5. 包装环保条款 (固定格式)
+            text += `五、包装环保条款\n禁止使用不可降解的塑料包装材料及有毒有害的缓冲填充物。供应商优先采用轻量化、可循环利用或可自然降解的环保包装材料，并承诺在运输及交货过程中尽量减少过度包装。\n\n`;
+
+            // 6. 废旧回收条款 (根据类型略有调整)
+            let c6 = `六、废旧回收条款\n中标供应商须承担“延伸生产者责任”，承诺在${procType === '工程' ? '施工废料及旧设施' : '产品报废或耗材用尽'}后，提供免费的回收服务，或委托具有法定环保资质的第三方机构进行绿色无害化处置，严禁随意丢弃污染校园环境。`;
+            text += c6;
+
+            // 隐藏空白态，显示结果
+            document.getElementById('emptyState').style.display = 'none';
+            document.getElementById('resultContent').style.display = 'flex';
+            
+            // 填入文本框
+            document.getElementById('clauseText').value = text;
+        }
+
+        function copyToClipboard() {
+            const textarea = document.getElementById('clauseText');
+            textarea.select();
+            document.execCommand('copy');
+            
+            // 简单的提示反馈
+            const copyBtn = document.querySelector('.btn-copy');
+            const originalHTML = copyBtn.innerHTML;
+            copyBtn.innerHTML = '<i class="fas fa-check"></i> 复制成功，快去粘贴吧！';
+            copyBtn.style.background = 'var(--primary-green)';
+            copyBtn.style.color = 'white';
+            
+            setTimeout(() => {
+                copyBtn.innerHTML = originalHTML;
+                copyBtn.style.background = 'white';
+                copyBtn.style.color = 'var(--primary-green)';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

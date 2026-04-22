@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户反馈 - 绿采共赢平台</title>
+    <link rel="stylesheet" href="../css/common.css">
+    <style>
+        .feedback-container {
+            max-width: 800px;
+            margin: 40px auto;
+        }
+        .feedback-header {
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        select, textarea, input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
+        textarea {
+            height: 150px;
+            resize: vertical;
+        }
+        .reward-info {
+            background: #fff9db;
+            border-left: 4px solid #fcc419;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #856404;
+        }
+        .back-nav {
+            margin-bottom: 20px;
+            display: block;
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <nav style="background: #2a8c2a; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; color: white;">
+        <div style="font-weight: bold; font-size: 18px;">绿采共赢平台-高校端</div>
+        <ul style="list-style: none; display: flex; gap: 20px; margin: 0; padding: 0;">
+            <li><a href="../index.html" style="color: white; text-decoration: none;">首页看板</a></li>
+            <li><a href="gzd-product-detail.html" style="color: white; text-decoration: none;">溢价测算</a></li>
+            <li><a href="gzd-message.html" style="color: white; text-decoration: none;">消息中心</a></li>
+            <li><a href="gzd-profile-setting.html" style="color: white; text-decoration: none;">个人中心</a></li>
+        </ul>
+    </nav>
+
+    <div class="feedback-container">
+        <a href="../index.html" class="back-nav">← 返回首页</a>
+
+        <div class="feedback-header">
+            <h1>意见反馈与举报</h1>
+            <p style="color: #666;">您的反馈将直接发送至平台管理端，协助我们优化绿色采购生态。</p>
+        </div>
+
+        <div class="reward-info">
+            <strong>🌟 积分奖励计划：</strong> 
+            提交有效的功能建议或数据纠错反馈，经核实后将获得 <b>50-200 绿色积分</b>，可用于兑换增值报表服务。
+        </div>
+
+        <div class="card">
+            <form id="feedbackForm">
+                <div class="form-group">
+                    <label>反馈类型</label>
+                    <select id="feedbackType">
+                        <option value="suggest">功能优化建议</option>
+                        <option value="data-error">测算数据纠错 (针对绿色溢价模型)</option>
+                        <option value="violation">供应商违规举报 (社会监督)</option>
+                        <option value="other">其他问题</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>相关订单/产品 ID (可选)</label>
+                    <input type="text" placeholder="如有具体涉及对象，请填写 ID">
+                </div>
+
+                <div class="form-group">
+                    <label>详细描述</label>
+                    <textarea id="feedbackDesc" placeholder="请详细说明您的问题或建议，以便我们快速为您处理..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>上传凭证图片 (可选)</label>
+                    <input type="file" accept="image/*" style="border:none; padding:0;">
+                </div>
+
+                <button type="button" class="btn-green" style="width: 100%; margin-top: 10px;" onclick="submitFeedback()">提交反馈</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function submitFeedback() {
+            const desc = document.getElementById('feedbackDesc').value;
+            if (!desc) {
+                alert("请填写描述内容后再提交。");
+                return;
+            }
+            
+            // 模拟提交成功交互 [cite: 53]
+            alert("提交成功！感谢您的参与，积分奖励将在审核通过后发放至您的账号。");
+            
+            // 重置表单
+            document.getElementById('feedbackForm').reset();
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>供应商资质智能核查 - 绿采共赢</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root { --primary-green: #29a672; --bg-gray: #f4f7fc; --danger: #ef4444; --warning: #f59e0b; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg-gray); font-family: 'Segoe UI', system-ui, sans-serif; padding: 20px 5%; color: #1e293b; }
+        
+        .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.03); margin-bottom: 20px; border: 1px solid #e2e8f0; }
+        
+        /* 顶部搜索区 */
+        .search-section { display: flex; gap: 15px; background: white; padding: 15px 20px; border-radius: 12px; border: 2px solid #e2e8f0; align-items: center; transition: 0.3s; }
+        .search-section:focus-within { border-color: var(--primary-green); box-shadow: 0 0 0 4px rgba(41, 166, 114, 0.1); }
+        .search-input { flex: 1; border: none; outline: none; font-size: 16px; color: #1e293b; }
+        .btn-search { background: var(--primary-green); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+
+        .check-layout { display: grid; grid-template-columns: 350px 1fr; gap: 24px; }
+
+        /* 左侧上传区 */
+        .upload-area { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 40px 20px; text-align: center; cursor: pointer; transition: 0.3s; background: #f8fafc; }
+        .upload-area:hover { border-color: var(--primary-green); background: #f0fdf4; }
+        .doc-req-list { margin-top: 20px; text-align: left; background: white; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .doc-req-item { font-size: 13px; color: #64748b; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+
+        /* 右侧报告区 */
+        .report-panel { min-height: 500px; position: relative; }
+        .audit-section { margin-bottom: 25px; }
+        .audit-section h4 { font-size: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9; }
+        
+        .audit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .audit-card { background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 5px; }
+        .audit-card .title { font-size: 12px; color: #64748b; }
+        .audit-card .value { font-size: 14px; font-weight: bold; }
+        
+        .status-tag { display: inline-block; padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+        .tag-pass { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+        .tag-fail { background: #fee2e2; color: #991b1b; border: 1px solid #fecaca; }
+        .tag-warn { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+        /* 加载与空白态 */
+        .overlay-loader { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 10; border-radius: 16px; }
+        .empty-state { text-align: center; padding-top: 100px; color: #94a3b8; }
+        
+        .action-bar { margin-top: 30px; display: flex; gap: 15px; }
+        .btn-reject { background: white; border: 1px solid var(--danger); color: var(--danger); padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; flex: 1; }
+        .btn-approve { background: var(--primary-green); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; flex: 2; opacity: 0.5; cursor: not-allowed; }
+        .btn-approve.active { opacity: 1; cursor: pointer; }
+
+    </style>
+</head>
+<body>
+
+    <div style="margin-bottom: 20px;">
+        <a href="gzd-workbench.html" style="color: var(--primary-green); text-decoration: none; font-weight: bold;">← 返回工作台</a>
+    </div>
+
+    <div class="card">
+        <h3 style="margin-bottom: 15px; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-search"></i> 大数据联网核查通道
+        </h3>
+        <p style="font-size: 13px; color: #64748b; margin-bottom: 15px;">对接国家企业信用信息公示系统，输入企业名称实现一键背景调查。</p>
+        <div class="search-section">
+            <i class="fas fa-building" style="color: #94a3b8;"></i>
+            <input type="text" id="corpInput" class="search-input" placeholder="例如：请输入华南理工大学附属绿色实验室...">
+            <button class="btn-search" onclick="searchCheck()">一键核查</button>
+        </div>
+    </div>
+
+    <div class="check-layout">
+        <div class="card" style="height: fit-content;">
+            <h3 style="font-size: 16px; margin-bottom: 15px;">供应商材料上传区</h3>
+            <div class="upload-area" onclick="uploadCheck()">
+                <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: var(--primary-green); margin-bottom: 15px;"></i>
+                <p style="font-weight: bold; font-size: 15px;">点击批量上传资质文件</p>
+                <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">支持营业执照、环保证书、质检报告等</p>
+            </div>
+
+            <div class="doc-req-list">
+                <div style="font-weight: bold; margin-bottom: 10px; font-size: 14px;">基础准入要求材料单：</div>
+                <div class="doc-req-item"><i class="fas fa-file-contract"></i> 1. 企业营业执照 (必须)</div>
+                <div class="doc-req-item"><i class="fas fa-leaf"></i> 2. ISO14001环境体系证书 (必须)</div>
+                <div class="doc-req-item"><i class="fas fa-microscope"></i> 3. 核心产品质检报告 (必须)</div>
+                <div class="doc-req-item"><i class="fas fa-file-signature"></i> 4. 廉洁与环保承诺书 (必须)</div>
+            </div>
+        </div>
+
+        <div class="card report-panel">
+            <div class="overlay-loader" id="loader">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 40px; color: var(--primary-green); margin-bottom: 15px;"></i>
+                <h3 style="color: #1e293b;">AI 智能校验中...</h3>
+                <p style="color: #64748b; font-size: 13px; margin-top: 5px;">正在核对资质完整性、有效期与工商一致性</p>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary-green); padding-bottom: 15px; margin-bottom: 20px;">
+                <h3 style="font-size: 18px;">资质核验分析报告</h3>
+                <span id="reportStatus" class="status-tag" style="background: #f1f5f9; color: #64748b;">等待核验</span>
+            </div>
+
+            <div id="reportContent">
+                <div class="empty-state">
+                    <i class="fas fa-file-shield" style="font-size: 50px; margin-bottom: 15px; opacity: 0.5;"></i>
+                    <p>请在左侧上传文件或在上方搜索企业名称</p>
+                </div>
+            </div>
+
+            <div class="action-bar" id="actionBar" style="display: none;">
+                <button class="btn-reject" id="btnReject" onclick="alert('已向该供应商发送驳回通知，要求补充更新相关资质。')">一键驳回退回</button>
+                <button class="btn-approve" id="btnApprove" onclick="alert('核验通过！该供应商资质已自动建立合规档案并准入。')">核验通过，准入归档</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 在页面加载时自动执行
+// 在脚本最上方加入
+window.addEventListener('DOMContentLoaded', (event) => {
+    // 获取 URL 中的公司名称参数
+    const urlParams = new URLSearchParams(window.location.search);
+    const companyName = urlParams.get('company');
+    
+    if (companyName) {
+        // 1. 将名称自动填入搜索框 (假设搜索框 id 为 corpInput)
+        const searchInput = document.getElementById('corpInput');
+        if (searchInput) {
+            searchInput.value = companyName;
+            // 2. 模拟点击搜索按钮 (假设搜索函数名为 searchCheck)
+            searchCheck(); 
+        }
+    }
+});
+        // 模拟完美核验数据 (联网搜索触发)
+        const perfectData = `
+            <div class="audit-section">
+                <h4><i class="fas fa-fingerprint" style="color: var(--info);"></i> 1. 企业信息一致性校验 <span class="status-tag tag-pass" style="margin-left: auto;">比对一致</span></h4>
+                <div class="audit-grid">
+                    <div class="audit-card"><span class="title">企业名称匹配度</span><span class="value">100% (华南理工大学附属实验室)</span></div>
+                    <div class="audit-card"><span class="title">统一社会信用代码</span><span class="value">91440101MA59XXXXX</span></div>
+                </div>
+            </div>
+            <div class="audit-section">
+                <h4><i class="fas fa-tasks" style="color: var(--primary-green);"></i> 2. 资质材料完整性识别 <span class="status-tag tag-pass" style="margin-left: auto;">材料齐全</span></h4>
+                <div class="audit-grid">
+                    <div class="audit-card"><span class="title">营业执照</span><span class="value" style="color: var(--primary-green);"><i class="fas fa-check"></i> 已识别</span></div>
+                    <div class="audit-card"><span class="title">环保证书</span><span class="value" style="color: var(--primary-green);"><i class="fas fa-check"></i> 已识别</span></div>
+                    <div class="audit-card"><span class="title">质检报告</span><span class="value" style="color: var(--primary-green);"><i class="fas fa-check"></i> 已识别</span></div>
+                    <div class="audit-card"><span class="title">廉洁承诺书</span><span class="value" style="color: var(--primary-green);"><i class="fas fa-check"></i> 已签署</span></div>
+                </div>
+            </div>
+            <div class="audit-section">
+                <h4><i class="far fa-calendar-check" style="color: var(--warning);"></i> 3. 证件有效期校验 <span class="status-tag tag-pass" style="margin-left: auto;">均在有效期内</span></h4>
+                <div class="audit-grid">
+                    <div class="audit-card"><span class="title">营业执照状态</span><span class="value">存续 (无经营期限)</span></div>
+                    <div class="audit-card"><span class="title">ISO14001 证书</span><span class="value">有效期至 2028-12-31</span></div>
+                </div>
+            </div>
+        `;
+
+        // 模拟识别出问题的核验数据 (上传文件触发)
+        const warningData = `
+            <div style="background: #fee2e2; border-left: 4px solid #ef4444; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <strong style="color: #991b1b;"><i class="fas fa-exclamation-circle"></i> 自动识别到 3 处合规风险！建议拦截并要求补充材料。</strong>
+            </div>
+            
+            <div class="audit-section">
+                <h4><i class="fas fa-fingerprint"></i> 1. 企业信息一致性校验 <span class="status-tag tag-fail" style="margin-left: auto;">信息不符</span></h4>
+                <div class="audit-grid">
+                    <div class="audit-card"><span class="title">提取名称</span><span class="value">绿能科技装备公司</span></div>
+                    <div class="audit-card" style="border-color: #fecaca; background: #fff5f5;"><span class="title" style="color: #ef4444;">工商核对名称</span><span class="value" style="color: #ef4444;">绿能科技装备(深圳)有限公司</span></div>
+                </div>
+            </div>
+            <div class="audit-section">
+                <h4><i class="fas fa-tasks"></i> 2. 资质材料完整性识别 <span class="status-tag tag-fail" style="margin-left: auto;">资质缺失</span></h4>
+                <div class="audit-grid">
+                    <div class="audit-card"><span class="title">营业执照</span><span class="value" style="color: var(--primary-green);"><i class="fas fa-check"></i> 已识别</span></div>
+                    <div class="audit-card" style="border-color: #fecaca; background: #fff5f5;"><span class="title" style="color: #ef4444;">质检报告</span><span class="value" style="color: #ef4444;"><i class="fas fa-times"></i> 未检测到相关文件</span></div>
+                </div>
+            </div>
+            <div class="audit-section">
+                <h4><i class="far fa-calendar-check"></i> 3. 证件有效期校验 <span class="status-tag tag-fail" style="margin-left: auto;">证件过期</span></h4>
+                <div class="audit-grid">
+                    <div class="audit-card" style="border-color: #fecaca; background: #fff5f5;"><span class="title" style="color: #ef4444;">ISO14001 环保证书</span><span class="value" style="color: #ef4444;">已于 2026-02-15 过期！</span></div>
+                </div>
+            </div>
+        `;
+
+        function simulateAudit(isPerfect) {
+            document.getElementById('loader').style.display = 'flex';
+            document.getElementById('actionBar').style.display = 'none';
+
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('reportContent').innerHTML = isPerfect ? perfectData : warningData;
+                document.getElementById('actionBar').style.display = 'flex';
+                
+                const statusTag = document.getElementById('reportStatus');
+                const btnApprove = document.getElementById('btnApprove');
+
+                if (isPerfect) {
+                    statusTag.className = 'status-tag tag-pass';
+                    statusTag.innerHTML = '<i class="fas fa-check-circle"></i> 核查通过，合规准入';
+                    btnApprove.classList.add('active');
+                    btnApprove.disabled = false;
+                } else {
+                    statusTag.className = 'status-tag tag-fail';
+                    statusTag.innerHTML = '<i class="fas fa-times-circle"></i> 存在合规风险';
+                    btnApprove.classList.remove('active');
+                    btnApprove.disabled = true; // 存在问题时禁止点击通过
+                }
+            }, 2000);
+        }
+
+        // 点击搜索按钮触发完美数据
+        function searchCheck() {
+            const val = document.getElementById('corpInput').value;
+            if(!val) return alert("请输入需要核查的企业名称");
+            simulateAudit(true);
+        }
+
+        // 点击上传触发风险识别数据
+        function uploadCheck() {
+            simulateAudit(false);
+        }
+    </script>
+</body>
+</html>

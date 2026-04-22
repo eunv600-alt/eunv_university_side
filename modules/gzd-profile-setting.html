@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人中心 - 绿采共赢高校端</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-green: #29a672;
+            --bg-gray: #f4f7fc;
+            --text-dark: #1e293b;
+            --border-color: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg-gray); font-family: 'Segoe UI', system-ui, sans-serif; color: var(--text-dark); padding-bottom: 50px; }
+
+        /* 顶部导航 */
+        header { background: white; padding: 15px 5%; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; }
+        .back-link { color: #64748b; text-decoration: none; font-size: 15px; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+        .back-link:hover { color: var(--primary-green); }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+
+        /* 个人信息卡片 */
+        .profile-header { background: white; border-radius: 16px; padding: 40px; display: flex; align-items: center; gap: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-bottom: 30px; border: 1px solid var(--border-color); }
+        .avatar-box { width: 100px; height: 100px; background: #f0fdf4; border: 2px solid #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px; flex-shrink: 0; }
+        
+        .profile-info h1 { font-size: 24px; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .tag-vip { background: linear-gradient(90deg, #f59e0b, #d97706); color: white; font-size: 12px; padding: 4px 12px; border-radius: 20px; font-weight: bold; }
+        
+        .info-row { font-size: 14px; color: #64748b; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .carbon-points { display: inline-flex; align-items: center; gap: 5px; color: var(--primary-green); font-weight: bold; background: #e6f4ea; padding: 5px 12px; border-radius: 20px; font-size: 13px; margin-top: 5px; }
+
+        /* 四宫格菜单 */
+        .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; }
+        .menu-card { background: white; border-radius: 16px; padding: 30px; border: 1px solid var(--border-color); display: flex; align-items: center; gap: 20px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.02); }
+        .menu-card:hover { transform: translateY(-5px); border-color: var(--primary-green); box-shadow: 0 10px 25px rgba(41,166,114,0.1); }
+        
+        .menu-icon { width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .icon-order { background: #fffbeb; color: #d97706; }
+        .icon-report { background: #f0fdf4; color: #166534; }
+        .icon-risk { background: #e0e7ff; color: #3730a3; }
+        .icon-setting { background: #f1f5f9; color: #475569; }
+        
+        .menu-text h3 { font-size: 16px; margin-bottom: 5px; color: #1e293b; }
+        .menu-text p { font-size: 13px; color: #94a3b8; }
+
+        /* 退出登录按钮 */
+        .btn-logout { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; width: 100%; padding: 15px; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-logout:hover { background: #ef4444; color: white; }
+
+        /* ================= 复杂功能弹窗样式 ================= */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; display: none; backdrop-filter: blur(4px); }
+        .modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: white; border-radius: 20px; z-index: 2001; display: none; opacity: 0; transition: 0.3s; box-shadow: 0 25px 50px rgba(0,0,0,0.15); max-height: 90vh; display: flex; flex-direction: column; }
+        .modal.active { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        
+        .modal-wide { width: 900px; }
+        .modal-narrow { width: 500px; }
+        
+        .modal-header { padding: 25px 30px; border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h2 { font-size: 18px; display: flex; align-items: center; gap: 10px; }
+        .btn-close { font-size: 20px; color: #94a3b8; cursor: pointer; transition: 0.2s; }
+        .btn-close:hover { color: #ef4444; }
+        
+        .modal-body { padding: 30px; overflow-y: auto; flex: 1; }
+
+        /* 表格通用样式 */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background: #f8fafc; padding: 12px; text-align: left; font-size: 13px; color: #64748b; border-bottom: 1px solid var(--border-color); }
+        .data-table td { padding: 15px 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
+        
+        /* 表单通用样式 */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: bold; color: #475569; margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; outline: none; font-size: 14px; }
+        .form-control:focus { border-color: var(--primary-green); }
+        
+        /* 开关 Switch */
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e1; transition: .4s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--primary-green); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        .btn-action { background: var(--primary-green); color: white; border: none; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .btn-action:hover { background: #218c5e; }
+        .btn-outline { background: white; border: 1px solid var(--border-color); color: #475569; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: 0.2s; }
+        .btn-outline:hover { border-color: var(--primary-green); color: var(--primary-green); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="../index.html" class="back-link"><i class="fas fa-arrow-left"></i> 返回首页看板</a>
+    </header>
+
+    <div class="container">
+        <div class="profile-header">
+            <div class="avatar-box">🏫</div>
+            <div class="profile-info">
+                <h1>华北电力大学采购办 <span class="tag-vip"><i class="fas fa-crown"></i> 增值付费版</span></h1>
+                <div class="info-row">账号 ID：EDU_2026_0892 <span style="margin: 0 10px;">|</span> 认证状态：<span style="color: var(--primary-green); font-weight: bold;"><i class="fas fa-check-circle"></i> 官方已认证</span></div>
+                <div class="carbon-points"><i class="fas fa-leaf"></i> 已贡献碳减排积分：1,250 积分</div>
+            </div>
+            <button style="margin-left: auto; background: white; border: 1px solid var(--border-color); padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; color: #475569;" onclick="alert('积分商城正在建设中，敬请期待！')">兑换权益</button>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-card" onclick="openModal('orderModal')">
+                <div class="menu-icon icon-order"><i class="fas fa-box-open"></i></div>
+                <div class="menu-text">
+                    <h3>历史所有订单</h3>
+                    <p>查看并管理所有绿色采购合同</p>
+                </div>
+            </div>
+
+            <div class="menu-card" onclick="openModal('reportModal')">
+                <div class="menu-icon icon-report"><i class="fas fa-clipboard-list"></i></div>
+                <div class="menu-text">
+                    <h3>测算报告历史</h3>
+                    <p>浏览与导出已生成的 PDF 报告</p>
+                </div>
+            </div>
+
+            <div class="menu-card" onclick="openModal('riskModal')">
+                <div class="menu-icon icon-risk"><i class="fas fa-shield-alt"></i></div>
+                <div class="menu-text">
+                    <h3>合规风控设置</h3>
+                    <p>管理系统审计规则与预警阈值</p>
+                </div>
+            </div>
+
+            <div class="menu-card" onclick="openModal('accountModal')">
+                <div class="menu-icon icon-setting"><i class="fas fa-cog"></i></div>
+                <div class="menu-text">
+                    <h3>账户与安全设置</h3>
+                    <p>修改密码、联系方式及接收偏好</p>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> 退出当前账号</button>
+    </div>
+
+    <div class="modal-overlay" id="overlay" onclick="closeAllModals()"></div>
+
+    <div class="modal modal-wide" id="orderModal">
+        <div class="modal-header">
+            <h2><i class="fas fa-box-open" style="color: #d97706;"></i> 绿色采购订单合同库</h2>
+            <i class="fas fa-times btn-close" onclick="closeAllModals()"></i>
+        </div>
+        <div class="modal-body">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                <input type="text" class="form-control" style="width: 300px;" placeholder="搜索合同编号、供应商...">
+                <select class="form-control" style="width: 150px;">
+                    <option>全部状态</option>
+                    <option>已履约</option>
+                    <option>执行中</option>
+                </select>
+            </div>
+            <table class="data-table">
+                <tr><th>订单/合同编号</th><th>供应商名称</th><th>采购金额</th><th>绿采碳积分</th><th>状态</th><th>操作</th></tr>
+                <tr>
+                    <td>HT-20260401-001</td><td>广州绿能科仪设备</td><td>¥ 125,000</td><td style="color:var(--primary-green);">+120</td>
+                    <td><span style="color: var(--primary-green); font-weight: bold;">执行中</span></td>
+                    <td><button class="btn-outline" onclick="alert('正在下载合同扫描件PDF...')">合同下载</button></td>
+                </tr>
+                <tr>
+                    <td>HT-20260315-089</td><td>曙光智算科技</td><td>¥ 450,000</td><td style="color:var(--primary-green);">+350</td>
+                    <td><span style="color: #64748b;">已履约完结</span></td>
+                    <td><button class="btn-outline" onclick="alert('正在下载合同扫描件PDF...')">合同下载</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal modal-wide" id="reportModal">
+        <div class="modal-header">
+            <h2><i class="fas fa-clipboard-list" style="color: #166534;"></i> 溢价测算报告存档</h2>
+            <i class="fas fa-times btn-close" onclick="closeAllModals()"></i>
+        </div>
+        <div class="modal-body">
+            <table class="data-table">
+                <tr><th>生成时间</th><th>测算项目名称</th><th>测算溢价率</th><th>预计回本周期</th><th>合规结论</th><th>操作</th></tr>
+                <tr>
+                    <td>2026-04-18</td><td>智能生化培养箱采购案</td><td>15.2%</td><td>2.5 年</td>
+                    <td><span style="background:#dcfce7; color:#166534; padding:3px 8px; border-radius:4px; font-size:12px;">可行推荐</span></td>
+                    <td><button class="btn-action" onclick="alert('报告 GZP-20260418 导出成功！')"><i class="fas fa-download"></i> 导出PDF</button></td>
+                </tr>
+                <tr>
+                    <td>2026-04-10</td><td>校园光伏照明改造一期</td><td>28.5%</td><td>6.8 年</td>
+                    <td><span style="background:#fee2e2; color:#991b1b; padding:3px 8px; border-radius:4px; font-size:12px;">较高风险</span></td>
+                    <td><button class="btn-action" onclick="alert('报告 GZP-20260410 导出成功！')"><i class="fas fa-download"></i> 导出PDF</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal modal-narrow" id="riskModal">
+        <div class="modal-header">
+            <h2><i class="fas fa-shield-alt" style="color: #3730a3;"></i> 审计预警阈值管理</h2>
+            <i class="fas fa-times btn-close" onclick="closeAllModals()"></i>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>供应商资质过期提前预警天数</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="number" class="form-control" value="30" style="width: 100px;"> <span>天</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>绿色采购最高容忍溢价率拦截线</label>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input type="number" class="form-control" value="25" style="width: 100px;"> <span>% (超过此值系统将强制拦截审批)</span>
+                </div>
+            </div>
+            
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 20px 0;">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div>
+                    <div style="font-weight: bold; font-size: 14px;">自动冻结违规供应商</div>
+                    <div style="font-size: 12px; color: #64748b;">若接口查询到环保处罚记录，自动关闭其投标权限</div>
+                </div>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <div>
+                    <div style="font-weight: bold; font-size: 14px;">接收重大风险短信提醒</div>
+                    <div style="font-size: 12px; color: #64748b;">发送至系统绑定的管理员手机号</div>
+                </div>
+                <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+            </div>
+
+            <button class="btn-action" style="width: 100%; padding: 12px;" onclick="saveSettings('风控阈值设置')">保存风控规则生效</button>
+        </div>
+    </div>
+
+    <div class="modal modal-narrow" id="accountModal">
+        <div class="modal-header">
+            <h2><i class="fas fa-cog" style="color: #475569;"></i> 账户信息与安全设置</h2>
+            <i class="fas fa-times btn-close" onclick="closeAllModals()"></i>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>高校采购办全称 (发票抬头)</label>
+                <input type="text" class="form-control" value="华北电力大学物资与采购管理中心" disabled style="background: #f8fafc; color: #94a3b8;">
+            </div>
+            <div class="form-group">
+                <label>管理员姓名</label>
+                <input type="text" class="form-control" value="张主任">
+            </div>
+            <div class="form-group">
+                <label>联系手机号 (用于风控短信接收)</label>
+                <input type="text" class="form-control" value="138****5678">
+            </div>
+            <div class="form-group">
+                <label>登录密码</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="password" class="form-control" value="********" disabled>
+                    <button class="btn-outline" onclick="alert('验证码已发送至手机，请查收后进行密码修改。')">修改密码</button>
+                </div>
+            </div>
+            <button class="btn-action" style="width: 100%; padding: 12px; margin-top: 10px;" onclick="saveSettings('账户信息')">保存更新</button>
+        </div>
+    </div>
+
+   <script>
+        // 打开对应的弹窗
+        function openModal(modalId) {
+            // 1. 瞬间重置所有弹窗状态（干掉冲突）
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(m => {
+                m.classList.remove('active');
+                m.style.display = 'none';
+            });
+            
+            // 2. 显示遮罩层
+            document.getElementById('overlay').style.display = 'block';
+            
+            // 3. 显示目标弹窗
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'flex';
+            
+            // 4. 给浏览器 10ms 反应时间，触发 CSS 弹出动画
+            setTimeout(() => {
+                modal.classList.add('active');
+            }, 10);
+        }
+
+        // 关闭所有弹窗
+        function closeAllModals() {
+            // 先瞬间隐藏灰色遮罩
+            document.getElementById('overlay').style.display = 'none';
+            
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                // 移除放大动画类，触发缩小动画
+                modal.classList.remove('active');
+                
+                // 修复 Bug 的核心：等 300ms 动画结束后隐藏，但要先判断它是不是又被打开了
+                setTimeout(() => {
+                    if (!modal.classList.contains('active')) {
+                        modal.style.display = 'none';
+                    }
+                }, 300); 
+            });
+        }
+
+        // 模拟保存操作
+        function saveSettings(type) {
+            alert(`【${type}】已成功更新并同步至云端服务器！`);
+            closeAllModals();
+        }
+
+        // 模拟退出登录
+        function logout() {
+            if(confirm("确定要退出绿采共赢高校端管理系统吗？")) {
+                alert("已安全退出。");
+                // 真实环境中这里会执行路由跳转，这里做个模拟跳转动作
+                window.location.href = "../index.html"; 
+            }
+        }
+    </script>
+</body>
+</html>
